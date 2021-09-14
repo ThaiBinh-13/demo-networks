@@ -17,8 +17,8 @@ export default defineComponent({
     const openModalConnect = () => {
       modalConnectOpen.value = true;
     };
-    onMounted(() => {
-      reconnectWallet();
+    onMounted(async () => {
+      await reconnectWallet();
     });
     return {
       accountId,

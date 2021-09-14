@@ -3,9 +3,9 @@ import type { WalletAdapter } from '@solana/wallet-adapter-base';
 import { useStorage } from '@vueuse/core';
 import { connectors, SupportedWallet } from '@/utils';
 import { clearUserWallet, setUserWallet, account } from './account.hook';
-import { resetProviders } from './provider.hook';
 import { WALLET_ID_KEY } from '@/configs';
-
+import { getTokenAccountsByOwner } from './wallet.hook';
+import { connection, initConnection } from './provider.hook';
 /**
  * Saved RPC Index map and saved wallet id
  */
@@ -31,6 +31,12 @@ export const connect = async (
     const { provider, ...userWalletDetail } = response;
     setUserWallet(userWalletDetail);
     walletAdapterConnected.value = provider;
+    if (!connection.value) {
+      initConnection();
+    }
+    if (provider.publicKey && connection.value) {
+      getTokenAccountsByOwner(provider.publicKey, connection.value);
+    }
   } catch (e) {
     console.error(e);
   }
@@ -47,7 +53,6 @@ export const connect = async (
  */
 export const disconnect = () => {
   clearUserWallet();
-  resetProviders();
   walletId.value = '';
   walletAdapterConnected.value?.disconnect();
 };

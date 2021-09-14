@@ -9,9 +9,6 @@ export default defineComponent({
       return [...SUPPORTED_WALLETS];
     });
     const onClickWallet = async wallet => {
-      console.debug({
-        wallet,
-      });
       await connect(wallet);
       modalConnectOpen.value = false;
     };

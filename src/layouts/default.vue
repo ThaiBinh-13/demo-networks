@@ -1,9 +1,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { connection, initConnection } from '@/hooks';
 import { MAIN_STYLE } from '@/configs';
 
 export default defineComponent({
   setup() {
+    if (!connection.value) {
+      initConnection();
+    }
     return {
       MAIN_STYLE,
     };

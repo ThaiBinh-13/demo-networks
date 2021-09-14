@@ -1,0 +1,10 @@
+.fluid {
+  @apply px-2 mx-auto;
+  max-width: 1280px;
+}
+
+@screen sm {
+  .fluid {
+    @apply px-6;
+  }
+}
