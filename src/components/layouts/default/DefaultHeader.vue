@@ -35,7 +35,7 @@ export default defineComponent({
     <header class="default-header">
       <nav class="topbar">
         <div class="topbar__content">
-          <h1 class="text-3xl font-bold text-white">Multiplier</h1>
+          <h1 class="text-3xl font-bold text-white">Demo</h1>
           <div>
             <span v-if="accountId" class="text-white text-base mr-3">
               Account: {{ middleEllipsis(accountId) }}

@@ -43,7 +43,7 @@ module.exports = {
             ],
           }),
       config.plugin('html').tap(args => {
-        args[0].title = 'Multiplier'; // eslint-disable-line
+        args[0].title = 'Demo'; // eslint-disable-line
         return args;
       }),
     );
