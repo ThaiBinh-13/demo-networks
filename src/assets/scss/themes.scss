@@ -1,0 +1,9 @@
+/* stylelint-disable no-duplicate-selectors */
+@import './variables';
+// only declare CSS custom properties here
+// alphabetical order
+:root {
+  @each $color, $value in $colors {
+    --#{"" + $color}: #{$value};
+  }
+}

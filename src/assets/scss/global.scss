@@ -1,0 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700;800&display=swap');
+
+* {
+  @apply transition-colors;
+}
+
+body {
+  @apply break-words text-sm;
+  @apply text-[#333];
+}
