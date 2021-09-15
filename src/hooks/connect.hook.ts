@@ -2,7 +2,12 @@ import { ref } from 'vue';
 import type { WalletAdapter } from '@solana/wallet-adapter-base';
 import { useStorage } from '@vueuse/core';
 import { connectors, SupportedWallet } from '@/utils';
-import { clearUserWallet, setUserWallet, account } from './account.hook';
+import {
+  clearUserWallet,
+  setUserWallet,
+  account,
+  getStakeAccounts,
+} from './account.hook';
 import { WALLET_ID_KEY } from '@/configs';
 import { getTokenAccountsByOwner } from './wallet.hook';
 import { connection, initConnection } from './provider.hook';
@@ -36,6 +41,7 @@ export const connect = async (
     }
     if (provider.publicKey && connection.value) {
       getTokenAccountsByOwner(provider.publicKey, connection.value);
+      getStakeAccounts(connection.value);
     }
   } catch (e) {
     console.error(e);

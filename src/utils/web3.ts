@@ -1,4 +1,9 @@
-import { Connection, Commitment, PublicKey } from '@solana/web3.js';
+import {
+  Connection,
+  Commitment,
+  PublicKey,
+  AccountInfo,
+} from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from '@/configs';
 
 export const createHttpProvider = (rpcUrl: string, commitment: Commitment) =>
@@ -29,3 +34,29 @@ export async function findAssociatedTokenAddress(
   );
   return publicKey;
 }
+
+export const getFilteredProgramAccounts = async (
+  connection: Connection,
+  programId: PublicKey,
+  filters: any,
+): Promise<{ publicKey: PublicKey; accountInfo: AccountInfo<Buffer> }[]> => {
+  const response = await connection.getProgramAccounts(programId, {
+    commitment: connection.commitment,
+    filters,
+    encoding: 'base64',
+  });
+  console.debug({
+    response,
+  });
+  return response.map(
+    ({ pubkey, account: { data, executable, owner, lamports } }) => ({
+      publicKey: new PublicKey(pubkey),
+      accountInfo: {
+        data,
+        executable,
+        owner: new PublicKey(owner),
+        lamports,
+      },
+    }),
+  );
+};
