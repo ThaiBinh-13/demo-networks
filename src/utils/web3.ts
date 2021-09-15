@@ -45,9 +45,6 @@ export const getFilteredProgramAccounts = async (
     filters,
     encoding: 'base64',
   });
-  console.debug({
-    response,
-  });
   return response.map(
     ({ pubkey, account: { data, executable, owner, lamports } }) => ({
       publicKey: new PublicKey(pubkey),

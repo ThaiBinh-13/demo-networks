@@ -1,19 +1,42 @@
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
-import { tokenAccountsDataMap, account, stakeInfos } from '@/hooks';
+import { defineComponent, computed, ref } from 'vue';
+import {
+  tokenAccountsDataMap,
+  account,
+  stakeInfos,
+  sendTransaction,
+  connection,
+  walletAdapterConnected,
+} from '@/hooks';
 import { middleEllipsis, toDP } from '@/utils';
+import { NETWORK_CLUSTER } from '@/configs';
 
 export default defineComponent({
   setup() {
+    const txid = ref<string | null>('');
     const balancesList = computed(() => {
       return Array.from(tokenAccountsDataMap.values());
     });
+    const currentNetwork = computed(() => {
+      return NETWORK_CLUSTER.toUpperCase();
+    });
+    const sendExampleTransaction = async () => {
+      if (walletAdapterConnected.value && connection.value) {
+        txid.value = await sendTransaction(
+          walletAdapterConnected.value,
+          connection.value,
+        );
+      }
+    };
     return {
       balancesList,
       account,
       middleEllipsis,
       toDP,
       stakeInfos,
+      sendExampleTransaction,
+      txid,
+      currentNetwork,
     };
   },
 });
@@ -21,6 +44,7 @@ export default defineComponent({
 
 <template>
   <div class="fluid">
+    <div class="title my-8 text-right">Current network: {{ currentNetwork }}</div>
     <div class="balances">
       <div class="title">Account balances</div>
       <div v-if="account" class="items">
@@ -77,6 +101,25 @@ export default defineComponent({
             </div>
           </div>
         </div>
+      </div>
+    </div>
+    <div class="mt-8">
+      <el-button
+        v-if="account"
+        @click="sendExampleTransaction"
+        class="focus:outline-none"
+      >
+        Send an example transaction
+      </el-button>
+      <div class="mt-4" v-if="txid">
+        txid:
+        <a
+          target="_blank"
+          class="text-blue-400"
+          :href="`https://solscan.io/tx/${txid}?cluster=testnet`"
+        >
+          {{ middleEllipsis(txid) }}
+        </a>
       </div>
     </div>
   </div>

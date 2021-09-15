@@ -1,5 +1,11 @@
 import { ref } from 'vue';
-import { PublicKey, Connection } from '@solana/web3.js';
+import {
+  PublicKey,
+  Connection,
+  Transaction,
+  SystemProgram,
+} from '@solana/web3.js';
+import type { WalletAdapter } from '@solana/wallet-adapter-base';
 import { UserWalletDetail } from '@/typings';
 import { getFilteredProgramAccounts } from '@/utils/web3';
 import {
@@ -32,6 +38,7 @@ export const clearUserWallet = () => {
 };
 
 export const getStakeAccounts = async (connection: Connection) => {
+  // Stake program id of Raydium
   const STAKE_PROGRAM_ID = new PublicKey(
     'EhhTKczWMGQt46ynNeRX1WfeagwwJd7ufHvCDjRxjo5Q',
   );
@@ -39,26 +46,21 @@ export const getStakeAccounts = async (connection: Connection) => {
     {
       memcmp: {
         offset: USER_STAKE_INFO_ACCOUNT_LAYOUT.offsetOf('stakerOwner'),
+        // example user, replace it with your wallet address
         bytes: 'HYf79FVs4xqUAgDDX5PgecTyToXk858UDSJTExR9J94o',
       },
     },
-    // {
-    //   dataSize: 165
-    // }
   ];
-  console.debug({
-    offset: USER_STAKE_INFO_ACCOUNT_LAYOUT.offsetOf('stakerOwner'),
-  });
   const stakeAccountInfos = await getFilteredProgramAccounts(
     connection,
     new PublicKey(STAKE_PROGRAM_ID),
     stakeFilters,
   );
   const result: any = [];
+  // Parse acount data
   stakeAccountInfos.forEach(stakeAccountInfo => {
     const { data } = stakeAccountInfo.accountInfo;
     const userStakeInfo = USER_STAKE_INFO_ACCOUNT_LAYOUT.decode(data);
-    console.log(userStakeInfo.stakerOwner.toBase58());
     const RAY_DECIMALS = 6;
     const stakeData = {
       depositBalance: new BigNumber(userStakeInfo.depositBalance)
@@ -89,4 +91,40 @@ export const getAccountInfo = async (
   //     decodedData,
   //   });
   // }
+};
+
+
+// Create a transaction object
+export const createTransferTransaction = async (provider: WalletAdapter) => {
+  if (!provider.publicKey) {
+    return null;
+  }
+  const transaction = new Transaction().add(
+    SystemProgram.transfer({
+      fromPubkey: provider.publicKey,
+      toPubkey: provider.publicKey,
+      lamports: 100,
+    }),
+  );
+  transaction.feePayer = provider.publicKey;
+  return transaction;
+};
+
+export const sendTransaction = async (
+  provider: WalletAdapter,
+  connection: Connection,
+) => {
+  const transaction = await createTransferTransaction(provider);
+  if (transaction) {
+    try {
+      const txid = await provider.sendTransaction(transaction, connection, {
+        signers: [],
+      });
+      return txid;
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
+  }
+  return null;
 };
