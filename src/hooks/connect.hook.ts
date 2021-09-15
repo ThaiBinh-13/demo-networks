@@ -41,7 +41,7 @@ export const connect = async (
     }
     if (provider.publicKey && connection.value) {
       getTokenAccountsByOwner(provider.publicKey, connection.value);
-      getStakeAccounts(connection.value);
+      getStakeAccounts();
     }
   } catch (e) {
     console.error(e);

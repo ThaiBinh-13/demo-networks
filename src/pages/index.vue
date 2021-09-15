@@ -44,8 +44,16 @@ export default defineComponent({
 
 <template>
   <div class="fluid">
-    <div class="title my-8 text-right">Current network: {{ currentNetwork }}</div>
+    <div class="title text-right mt-4">
+      Current network: {{ currentNetwork }}
+    </div>
     <div class="balances">
+      <div class="text-xl mb-4">
+        Faucet
+        <a class="text-blue-500" target="_blank" href="https://solfaucet.com/">
+          https://solfaucet.com/
+        </a>
+      </div>
       <div class="title">Account balances</div>
       <div v-if="account" class="items">
         <div v-for="item in balancesList" :key="item.mintAddress" class="item">
@@ -71,7 +79,7 @@ export default defineComponent({
       </div>
     </div>
     <div class="methods mt-8">
-      <div class="title">Example contract method</div>
+      <div class="title">Stake info from mainnet-beta of Raydium</div>
       <div clas="mt-4">
         Get stake info of HYf79FVs4xqUAgDDX5PgecTyToXk858UDSJTExR9J94o on
         Raydium
@@ -85,13 +93,7 @@ export default defineComponent({
           <div>
             <span class="mr-1">Stake account address:</span>
             <span>
-              <a
-                target="_blank"
-                class="text-blue-400"
-                href="https://solscan.io/account/GM5hvzwumBAzdJt7VXYKopjH6E1PAWKf1kyohE84QedP"
-              >
-                {{ middleEllipsis(info.stakeAccountAddress) }}
-              </a>
+              {{ (info.stakeAccountAddress) }}
             </span>
           </div>
           <div class="text-right">

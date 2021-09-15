@@ -4,10 +4,11 @@ import {
   Connection,
   Transaction,
   SystemProgram,
+  clusterApiUrl,
 } from '@solana/web3.js';
 import type { WalletAdapter } from '@solana/wallet-adapter-base';
 import { UserWalletDetail } from '@/typings';
-import { getFilteredProgramAccounts } from '@/utils/web3';
+import { getFilteredProgramAccounts, createHttpProvider } from '@/utils/web3';
 import {
   USER_STAKE_INFO_ACCOUNT_LAYOUT,
   ACCOUNT_LAYOUT,
@@ -37,7 +38,11 @@ export const clearUserWallet = () => {
   account.value = '';
 };
 
-export const getStakeAccounts = async (connection: Connection) => {
+export const getStakeAccounts = async () => {
+  const connection = createHttpProvider(
+    clusterApiUrl('mainnet-beta'),
+    'confirmed',
+  );
   // Stake program id of Raydium
   const STAKE_PROGRAM_ID = new PublicKey(
     'EhhTKczWMGQt46ynNeRX1WfeagwwJd7ufHvCDjRxjo5Q',
@@ -92,7 +97,6 @@ export const getAccountInfo = async (
   //   });
   // }
 };
-
 
 // Create a transaction object
 export const createTransferTransaction = async (provider: WalletAdapter) => {
