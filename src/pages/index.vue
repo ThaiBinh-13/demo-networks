@@ -79,7 +79,7 @@ export default defineComponent({
       </div>
     </div>
     <div class="methods mt-8">
-      <div class="title">Stake info from mainnet-beta of Raydium</div>
+      <div class="title">Stake info from mainnet-beta</div>
       <div clas="mt-4">
         Get stake info of HYf79FVs4xqUAgDDX5PgecTyToXk858UDSJTExR9J94o on
         Raydium
