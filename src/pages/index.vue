@@ -39,13 +39,14 @@ export default defineComponent({
       <a class="text-blue-400" target="_blank" :href="FAUCET">Westend Faucet</a>
     </div>
     <div>
-      If cannot faucet funds, please download the json file from
+      If cannot faucet funds, please download the json file
       <a
         class="text-blue-400"
         target="_blank"
-        href="https://drive.google.com/file/d/1sV_NdtoVaFojUbPMWfr1t1AMpV-LbGFX/view"
+        download
+        href="/assets/5Ge87uy1J6VLoG7MBW7W7jdC4ujhcwCGhJp7FRhqZBT5q9Ww.json"
       >
-        link
+        download the json file
       </a>
       and import to Polkadot{.js} wallet. The password is:
       <strong>binhbungbu69</strong>
