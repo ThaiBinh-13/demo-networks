@@ -93,7 +93,7 @@ export default defineComponent({
         </div>
       </div>
       <div class="mt-4 mb-2">
-        <el-button @click="sendTransaction">
+        <el-button :loading="txState.loading" @click="sendTransaction">
           Make an example transaction
         </el-button>
       </div>

@@ -13,6 +13,7 @@ export interface IAccount {
 export interface ITxState {
   tx: string;
   error: any;
+  loading: boolean;
 }
 
 export const listAccounts = useStorage<IAccount[]>('accounts', []);
@@ -27,6 +28,7 @@ export const accountBalance = ref<number>(0);
 export const txState = reactive<ITxState>({
   tx: '',
   error: null,
+  loading: false,
 });
 
 export const setUserWallet = (payload: IAccount) => {
@@ -52,6 +54,7 @@ export const getAccountBalance = async (address: string) => {
 
 export const sendTransaction = async () => {
   try {
+    txState.loading = true;
     txState.error = null;
     txState.tx = '';
     const injector = await web3FromAddress(account.value.address);
@@ -60,7 +63,9 @@ export const sendTransaction = async () => {
       .signAndSend(account.value.address, { signer: injector.signer });
     const txHash = String(tx);
     txState.tx = txHash;
+    txState.loading = false;
   } catch (error) {
     txState.error = error;
+    txState.loading = false;
   }
 };
