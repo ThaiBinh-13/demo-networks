@@ -38,6 +38,18 @@ export default defineComponent({
     <div class="text-2xl">
       <a class="text-blue-400" target="_blank" :href="FAUCET">Westend Faucet</a>
     </div>
+    <div>
+      If cannot faucet funds, please download the json file from
+      <a
+        class="text-blue-400"
+        target="_blank"
+        href="https://drive.google.com/file/d/1sV_NdtoVaFojUbPMWfr1t1AMpV-LbGFX/view"
+      >
+        link
+      </a>
+      and import to Polkadot{.js} wallet. The password is:
+      <strong>binhbungbu69</strong>
+    </div>
     <div class="text-2xl mt-2">
       <a class="text-blue-400" target="_blank" :href="WALLET_EXTENSION">
         Wallet extension
