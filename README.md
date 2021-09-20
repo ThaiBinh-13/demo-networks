@@ -1,22 +1,16 @@
-# Solana connect wallet demo
+# Polkadot connect wallet demo
 
 ### Wallet supported
 
-* [Phantom Wallet](https://phantom.app/)
-* [Solflare Wallet](https://solflare.com/)
-* [Coin98 Wallet](https://coin98.com/)
-* [Sollet Web](https://www.sollet.io/)
+* [Polkadot{.js} Wallet](https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd)
+
 
 
 ### Feature
 
 * Connect wallet, reconnect saved wallet
-* Fetch user SOL balance
-* Fetch all user's token accounts
-
-### Developing
-
-* Calling a simple smart contract on Solana
+* Fetch user balance
+* Make a transfer transaction, using wallet Polkadot{.js} wallet to sign and send
 
 
 
