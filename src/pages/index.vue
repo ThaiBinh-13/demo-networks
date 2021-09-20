@@ -1,127 +1,100 @@
 <script lang="ts">
-import { defineComponent, computed, ref } from 'vue';
+import { defineComponent, computed, onMounted } from 'vue';
 import {
-  tokenAccountsDataMap,
   account,
-  stakeInfos,
+  getAccountBalance,
+  accountBalance,
   sendTransaction,
-  connection,
-  walletAdapterConnected,
+  txState,
 } from '@/hooks';
-import { middleEllipsis, toDP } from '@/utils';
-import { NETWORK_CLUSTER } from '@/configs';
+import { FAUCET, WALLET_EXTENSION } from '@/configs';
+import { middleEllipsis } from '@/utils';
 
 export default defineComponent({
   setup() {
-    const txid = ref<string | null>('');
-    const balancesList = computed(() => {
-      return Array.from(tokenAccountsDataMap.values());
+    const balance = computed(() => {
+      return accountBalance.value;
     });
-    const currentNetwork = computed(() => {
-      return NETWORK_CLUSTER.toUpperCase();
-    });
-    const sendExampleTransaction = async () => {
-      if (walletAdapterConnected.value && connection.value) {
-        txid.value = await sendTransaction(
-          walletAdapterConnected.value,
-          connection.value,
-        );
-      }
-    };
+    if (account.value.address) {
+      getAccountBalance(account.value.address);
+    }
+
     return {
-      balancesList,
+      balance,
       account,
+      FAUCET,
+      txState,
+      WALLET_EXTENSION,
       middleEllipsis,
-      toDP,
-      stakeInfos,
-      sendExampleTransaction,
-      txid,
-      currentNetwork,
+      sendTransaction,
     };
   },
 });
 </script>
 
 <template>
-  <div class="fluid">
-    <div class="title text-right mt-4">
-      Current network: {{ currentNetwork }}
+  <div class="fluid mt-4">
+    <div class="text-2xl text-right">Current network: Westend</div>
+    <div class="text-2xl">
+      <a class="text-blue-400" target="_blank" :href="FAUCET">Westend Faucet</a>
     </div>
-    <div class="balances">
-      <div class="text-xl mb-4">
-        Faucet
-        <a class="text-blue-500" target="_blank" href="https://solfaucet.com/">
-          https://solfaucet.com/
-        </a>
-      </div>
-      <div class="title">Account balances</div>
-      <div v-if="account" class="items">
-        <div v-for="item in balancesList" :key="item.mintAddress" class="item">
-          <div>
-            <div>
-              <span class="mr-1">Mint Address:</span>
-              <span>
-                {{ middleEllipsis(item.mintAddress) }}
-              </span>
-            </div>
-            <div>
-              <span class="mr-1">Token Account:</span>
-              <span>
-                {{ middleEllipsis(item.tokenAccountAddress) }}
-              </span>
-            </div>
-          </div>
-          <div class="text-right">
-            <div>Balance</div>
-            <div>{{ item.balance }}</div>
-          </div>
-        </div>
-      </div>
+    <div class="text-2xl mt-2">
+      <a class="text-blue-400" target="_blank" :href="WALLET_EXTENSION">
+        Wallet extension
+      </a>
     </div>
-    <div class="methods mt-8">
-      <div class="title">Stake info from mainnet-beta</div>
-      <div clas="mt-4">
-        Get stake info of HYf79FVs4xqUAgDDX5PgecTyToXk858UDSJTExR9J94o on
-        Raydium
-      </div>
-      <div class="items">
+    <div v-if="account.address">
+      <div class="mt-4 text-2xl">Balance</div>
+      <div class="mt-2">
         <div
-          v-for="info in stakeInfos"
-          :key="info.stakeAccountAddress"
-          class="item"
+          class="
+            bg-white
+            rounded-md
+            px-4
+            py-6
+            flex
+            items-center
+            justify-between
+            shadow-md
+          "
         >
           <div>
-            <span class="mr-1">Stake account address:</span>
-            <span>
-              {{ (info.stakeAccountAddress) }}
-            </span>
-          </div>
-          <div class="text-right">
             <div>
-              <span class="mr-1">Staked:</span>
-              <span>{{ info.depositBalance }} RAY</span>
+              <span class="mr-2">Wallet name:</span>
+              <span>{{ account.name }}</span>
+            </div>
+            <div>
+              <span class="mr-2">Wallet address:</span>
+              <span>
+                <a
+                  class="text-blue-400"
+                  target="_blank"
+                  :href="`https://westend.subscan.io/account/${account.address}`"
+                >
+                  {{ middleEllipsis(account.address) }}
+                </a>
+              </span>
             </div>
           </div>
+          <div>{{ balance }} DOT</div>
         </div>
       </div>
-    </div>
-    <div class="mt-8">
-      <el-button
-        v-if="account"
-        @click="sendExampleTransaction"
-        class="focus:outline-none"
-      >
-        Send an example transaction
-      </el-button>
-      <div class="mt-4" v-if="txid">
-        txid:
+      <div class="mt-4 mb-2">
+        <el-button @click="sendTransaction">
+          Make an example transaction
+        </el-button>
+      </div>
+      <div v-if="txState.tx">
         <a
-          target="_blank"
           class="text-blue-400"
-          :href="`https://solscan.io/tx/${txid}?cluster=testnet`"
+          target="_blank"
+          :href="`https://westend.subscan.io/extrinsic/${txState.tx}`"
         >
-          {{ middleEllipsis(txid) }}
+          {{ txState.tx }}
         </a>
+      </div>
+      <div v-if="txState.error" class="text-red-500">
+        {{ txState.error }}
       </div>
     </div>
   </div>

@@ -1,19 +1,23 @@
 import { ref } from 'vue';
-import type { WalletAdapter } from '@solana/wallet-adapter-base';
 import { useStorage } from '@vueuse/core';
-import { connectors, SupportedWallet } from '@/utils';
 import {
-  clearUserWallet,
+  web3Accounts,
+  web3Enable,
+  web3FromAddress,
+} from '@polkadot/extension-dapp';
+import {
   setUserWallet,
-  account,
-  getStakeAccounts,
+  setListAccount,
+  IAccount,
+  getAccountBalance,
 } from './account.hook';
 import { WALLET_ID_KEY } from '@/configs';
-import { getTokenAccountsByOwner } from './wallet.hook';
-import { connection, initConnection } from './provider.hook';
+
 /**
  * Saved RPC Index map and saved wallet id
  */
+export const signer = ref<any>();
+
 const walletId = useStorage(WALLET_ID_KEY, '');
 
 /**
@@ -21,30 +25,38 @@ const walletId = useStorage(WALLET_ID_KEY, '');
  */
 export const isConnecting = ref(false);
 
-export const walletAdapterConnected = ref<WalletAdapter>();
-
 export const modalConnectOpen = ref(false);
 
-export const connect = async (
-  id: SupportedWallet,
-  callback?: (arg?: []) => unknown,
-) => {
-  walletId.value = id;
+export const connect = async (callback?: (arg?: []) => unknown) => {
   isConnecting.value = true;
   try {
-    const response = await connectors[id as SupportedWallet]();
-    const { provider, ...userWalletDetail } = response;
-    setUserWallet(userWalletDetail);
-    walletAdapterConnected.value = provider;
-    if (!connection.value) {
-      initConnection();
+    console.debug('connectclick');
+    // returns an array of all the injected sources
+    // (this needs to be called first, before other requests)
+    const allInjected = await web3Enable('Demo Dot');
+    if (!allInjected || !allInjected.length) {
+      alert('Please install Polkadot{.js} wallet extension');
+      throw new Error('please install extension');
     }
-    if (provider.publicKey && connection.value) {
-      getTokenAccountsByOwner(provider.publicKey, connection.value);
-      getStakeAccounts();
+    walletId.value = 'polkadot_js';
+    // Get all accounts from wallet
+    const allAccounts = await web3Accounts();
+    if (allAccounts && allAccounts) {
+      const injector = await web3FromAddress(allAccounts[0].address);
+      signer.value = injector.signer;
+      const accounts: IAccount[] = allAccounts.map(el => {
+        return {
+          address: el.address,
+          name: el.meta.name || '',
+        };
+      });
+      setListAccount(accounts);
+      setUserWallet(accounts[0]);
     }
   } catch (e) {
     console.error(e);
+    setListAccount([]);
+    setUserWallet({} as IAccount);
   }
   isConnecting.value = false;
   if (callback) callback();
@@ -54,20 +66,9 @@ export const connect = async (
   // }
 };
 
-/**
- * Handle disconnect wallet
- */
-export const disconnect = () => {
-  clearUserWallet();
-  walletId.value = '';
-  walletAdapterConnected.value?.disconnect();
-};
-
-/**
- * Handle reconnect wallet when user get back to our website
- */
-export const reconnectWallet = () => {
-  if (walletId.value && !account.value) {
-    connect(walletId.value as SupportedWallet);
-  }
+export const onChangeAccountConnected = async (acc: IAccount) => {
+  const injector = await web3FromAddress(acc.address);
+  signer.value = injector.signer;
+  setUserWallet(acc);
+  getAccountBalance(acc.address);
 };

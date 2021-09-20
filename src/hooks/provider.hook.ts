@@ -1,18 +1,18 @@
-import { ref } from 'vue';
-import { Connection, clusterApiUrl, Cluster } from '@solana/web3.js';
-import { createHttpProvider } from '@/utils/web3';
-import { NETWORK_CLUSTER, DEFAULT_CHAIN_ID } from '@/configs';
+import { reactive } from 'vue';
+import { ApiPromise, WsProvider } from '@polkadot/api';
+import { WS_PROVIDER } from '@/configs';
+
 /**
- * Implicit `any` type is provider for each chain
+ * Implicit `any` type is provider
  */
-export const connection = ref<Connection>();
+export const api = reactive<any>({
+  provider: null,
+  isReady: false,
+});
 
-export const selectedChain = ref(DEFAULT_CHAIN_ID);
-
-export const initConnection = () => {
-  const conn = createHttpProvider(
-    clusterApiUrl(NETWORK_CLUSTER as Cluster),
-    'confirmed',
-  );
-  connection.value = conn;
+export const initProvider = async () => {
+  const pro = new WsProvider(WS_PROVIDER);
+  const wsApi = await ApiPromise.create({ provider: pro }); // eslint-disable-line
+  api.provider = wsApi;
+  api.isReady = true;
 };

@@ -1,15 +1,17 @@
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { connection, initConnection } from '@/hooks';
+import { defineComponent, computed } from 'vue';
 import { MAIN_STYLE } from '@/configs';
+import { initProvider, api } from '@/hooks';
 
 export default defineComponent({
   setup() {
-    if (!connection.value) {
-      initConnection();
-    }
+    initProvider();
+    const isApiReady = computed(() => {
+      return api.isReady;
+    });
     return {
       MAIN_STYLE,
+      isApiReady,
     };
   },
 });
@@ -18,7 +20,7 @@ export default defineComponent({
 <template>
   <div class="min-h-screen app-container">
     <DefaultHeader />
-    <main class="w-full">
+    <main v-if="isApiReady" class="w-full">
       <RouterView />
     </main>
   </div>

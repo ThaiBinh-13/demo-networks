@@ -1,5 +1,4 @@
 export * from './copy';
-export * from './wallet';
 export * from './date';
 export * from './number';
 export * from './promise';
