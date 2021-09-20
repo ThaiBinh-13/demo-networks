@@ -4,6 +4,7 @@ import {
   web3Accounts,
   web3Enable,
   web3FromAddress,
+  web3AccountsSubscribe,
 } from '@polkadot/extension-dapp';
 import {
   setUserWallet,
@@ -17,6 +18,8 @@ import { WALLET_ID_KEY } from '@/configs';
  * Saved RPC Index map and saved wallet id
  */
 export const signer = ref<any>();
+
+export const unsubscribe = ref<Function>();
 
 const walletId = useStorage(WALLET_ID_KEY, '');
 
@@ -71,4 +74,16 @@ export const onChangeAccountConnected = async (acc: IAccount) => {
   signer.value = injector.signer;
   setUserWallet(acc);
   getAccountBalance(acc.address);
+};
+
+export const subcribeAccounts = async () => {
+  unsubscribe.value = await web3AccountsSubscribe(allAccounts => {
+    const accounts = allAccounts.map(el => {
+      return {
+        address: el.address,
+        name: el.meta.name || '',
+      };
+    });
+    setListAccount(accounts as IAccount[]);
+  });
 };

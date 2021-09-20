@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, computed, onMounted } from 'vue';
+import { defineComponent, computed, onMounted, onBeforeUnmount } from 'vue';
 import { middleEllipsis } from '@/utils';
 import {
   account,
@@ -8,6 +8,8 @@ import {
   setUserWallet,
   IAccount,
   onChangeAccountConnected,
+  subcribeAccounts,
+  unsubscribe,
 } from '@/hooks';
 
 export default defineComponent({
@@ -21,6 +23,12 @@ export default defineComponent({
     onMounted(() => {
       if (account.value.address) {
         connect();
+        subcribeAccounts();
+      }
+    });
+    onBeforeUnmount(() => {
+      if (unsubscribe.value) {
+        unsubscribe.value();
       }
     });
     return {
