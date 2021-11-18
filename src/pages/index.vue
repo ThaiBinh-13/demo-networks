@@ -38,6 +38,19 @@ export default defineComponent({
     <div class="text-2xl">
       <a class="text-blue-400" target="_blank" :href="FAUCET">Westend Faucet</a>
     </div>
+    <div>
+      If cannot faucet funds, please download the json file
+      <a
+        class="text-blue-400"
+        target="_blank"
+        download
+        href="/assets/5Ge87uy1J6VLoG7MBW7W7jdC4ujhcwCGhJp7FRhqZBT5q9Ww.json"
+      >
+        download the json file
+      </a>
+      and import to Polkadot{.js} wallet. The password is:
+      <strong>binhbungbu69</strong>
+    </div>
     <div class="text-2xl mt-2">
       <a class="text-blue-400" target="_blank" :href="WALLET_EXTENSION">
         Wallet extension
@@ -80,7 +93,7 @@ export default defineComponent({
         </div>
       </div>
       <div class="mt-4 mb-2">
-        <el-button @click="sendTransaction">
+        <el-button :loading="txState.loading" @click="sendTransaction">
           Make an example transaction
         </el-button>
       </div>

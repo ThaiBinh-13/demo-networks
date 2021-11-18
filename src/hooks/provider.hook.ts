@@ -12,7 +12,7 @@ export const api = reactive<any>({
 
 export const initProvider = async () => {
   const pro = new WsProvider(WS_PROVIDER);
-  const wsApi = await ApiPromise.create({ provider: pro }); // eslint-disable-line
+  const wsApi = await ApiPromise.create({ provider: pro });
   api.provider = wsApi;
   api.isReady = true;
 };
