@@ -102,7 +102,7 @@
     "vue-cli-plugin-webpack-bundle-analyzer": "~4.0.0"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=14 <17"
   },
   "lint-staged": {
     "*.{js,jsx,vue,ts,tsx}": [
